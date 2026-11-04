@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BFR SUPERMACY LEAGUE 2026 | Match Center</title>
+<style>
+:root {
+  --site-primary: #152a4a;
+  --site-on-primary: #ffffff;
+  --site-secondary: #e0a72e;
+  --site-on-secondary: #1e2633;
+  --site-background: #eef2f7;
+  --site-on-background: #172235;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  --surface: light-dark(#ffffff, #172235);
+  --surface-soft: light-dark(#f5f7fb, #202f45);
+  --text-muted: light-dark(#69778d, #a9b6c9);
+  --border: light-dark(#dce3ed, #35465f);
+  --success: #17865b;
+  --warning: #c78316;
+  --danger: #c44747;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--site-font-body);
+  color: var(--site-on-background);
+  background: var(--site-background);
+}
+#app {
+  min-height: 100vh;
+  width: 100%;
+  border-radius: 0;
+  background: var(--site-background);
+  color: var(--site-on-background);
+  overflow: hidden;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  background: var(--site-primary);
+  color: var(--site-on-primary);
+  padding: calc(22px * var(--site-spacing-scale)) max(20px, calc((100vw - 1180px)/2));
+  position: relative;
+  overflow: hidden;
+}
+.topbar::after {
+  content: "";
+  position: absolute;
+  width: 330px; height: 330px;
+  border: 48px solid var(--site-secondary);
+  border-radius: 50%;
+  opacity: calc(.12 * var(--site-decoration-opacity));
+  right: -90px; top: -190px;
+  pointer-events: none;
+}
+.brandline { display:flex; align-items:center; justify-content:space-between; gap:18px; position:relative; z-index:1; }
+.brand { display:flex; align-items:center; gap:14px; }
+.logo {
+  width:48px; height:48px; border-radius:15px;
+  display:grid; place-items:center;
+  background:var(--site-secondary); color:var(--site-on-secondary);
+  font-weight:950; font-size:20px; letter-spacing:-2px;
+  box-shadow:0 8px 24px #0002;
+}
+.eyebrow { font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:.75; font-weight:800; }
+h1 { margin:3px 0 0; font-family:var(--site-font-heading); font-size:calc(27px * var(--site-heading-scale)); line-height:1.1; letter-spacing:-.8px; }
+.top-actions { display:flex; gap:9px; flex-wrap:wrap; }
+.top-actions button, .btn {
+  border:1px solid #ffffff35; background:#ffffff12; color:inherit;
+  padding:10px 14px; border-radius:calc(11px * var(--site-radius-scale)); font-weight:750;
+}
+.top-actions button:hover { background:#ffffff25; }
+.hero-strip {
+  display:flex; flex-wrap:wrap; gap:9px; margin-top:22px; position:relative; z-index:1;
+}
+.pill {
+  display:inline-flex; align-items:center; gap:7px;
+  border:1px solid #ffffff30; background:#ffffff12;
+  padding:7px 11px; border-radius:99px; font-size:12px; font-weight:750;
+}
+.pill b { color:var(--site-secondary); }
+main { max-width:1180px; margin:0 auto; padding:25px 20px 60px; }
+.stats {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-top:-2px;
+}
+.stat {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:calc(16px * var(--site-radius-scale)); padding:17px 18px;
+  box-shadow:0 5px 18px #1a2b4510;
+}
+.stat-label { color:var(--text-muted); font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:800; }
+.stat-value { font-size:28px; font-weight:900; margin-top:5px; letter-spacing:-1px; }
+.stat-note { color:var(--text-muted); font-size:12px; margin-top:2px; }
+.tabs { display:flex; gap:7px; margin:25px 0 18px; border-bottom:1px solid var(--border); overflow:auto; }
+.tab {
+  border:0; background:transparent; color:var(--text-muted); padding:12px 16px;
+  font-weight:850; border-bottom:3px solid transparent; white-space:nowrap;
+}
+.tab.active { color:var(--site-primary); border-bottom-color:var(--site-secondary); }
+.panel { display:none; }
+.panel.active { display:block; }
+.section-head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:8px 0 15px; flex-wrap:wrap; }
+.section-head h2 { margin:0; font-size:calc(21px * var(--site-heading-scale)); letter-spacing:-.5px; }
+.section-head p { color:var(--text-muted); margin:5px 0 0; font-size:13px; }
+.controls { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
+.control, .field {
+  background:var(--surface); color:var(--site-on-background); border:1px solid var(--border);
+  border-radius:10px; padding:10px 12px; min-height:40px;
+}
+.primary-btn {
+  background:var(--site-secondary); color:var(--site-on-secondary); border:0;
+  padding:11px 15px; border-radius:10px; font-weight:900;
+}
+.ghost-btn {
+  background:var(--surface); color:var(--site-on-background); border:1px solid var(--border);
+  padding:10px 13px; border-radius:10px; font-weight:800;
+}
+.group-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.group-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; overflow:hidden;
+}
+.group-title { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; background:var(--site-primary); color:var(--site-on-primary); }
+.group-title strong { font-size:15px; }
+.group-title span { font-size:11px; opacity:.75; }
+.team-row { padding:12px 15px; display:flex; justify-content:space-between; gap:12px; border-top:1px solid var(--border); }
+.team-row:first-of-type { border-top:0; }
+.team-name { font-weight:800; font-size:13px; }
+.team-cap { color:var(--text-muted); font-size:11px; margin-top:3px; }
+.table-wrap { overflow:auto; background:var(--surface); border:1px solid var(--border); border-radius:15px; }
+table { width:100%; border-collapse:collapse; min-width:760px; }
+th { background:var(--surface-soft); text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); padding:13px 14px; }
+td { padding:13px 14px; border-top:1px solid var(--border); font-size:13px; vertical-align:middle; }
+td strong { font-weight:850; }
+.muted { color:var(--text-muted); }
+.badge { display:inline-block; padding:5px 8px; border-radius:99px; font-size:10px; font-weight:900; background:var(--surface-soft); }
+.badge.upcoming { color:var(--warning); }
+.badge.completed { color:var(--success); }
+.badge.live { color:var(--danger); }
+.team-select-card {
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+  background:var(--site-primary); color:var(--site-on-primary); padding:20px;
+  border-radius:16px; margin-bottom:14px; flex-wrap:wrap;
+}
+.team-select-card h3 { margin:0; font-size:21px; }
+.team-select-card p { margin:5px 0 0; opacity:.75; font-size:12px; }
+.team-select-card select { min-width:250px; }
+.empty { padding:30px; text-align:center; color:var(--text-muted); }
+.footer-note { margin-top:18px; color:var(--text-muted); font-size:11px; text-align:center; }
+.modal-backdrop { position:fixed; inset:0; background:#07132699; display:none; align-items:center; justify-content:center; padding:18px; z-index:10; }
+.modal-backdrop.show { display:flex; }
+.modal { width:min(560px,100%); max-height:90vh; overflow:auto; background:var(--surface); color:var(--site-on-background); border-radius:18px; padding:22px; box-shadow:0 20px 80px #0004; }
+.modal h3 { margin:0 0 15px; font-size:20px; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-item { display:flex; flex-direction:column; gap:6px; }
+.form-item label { font-size:11px; color:var(--text-muted); font-weight:850; text-transform:uppercase; }
+.form-item input, .form-item select, .form-item textarea { width:100%; }
+.form-item.full { grid-column:1/-1; }
+.modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
+.small { font-size:11px; }
+.points-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.points-card { background:var(--surface); border:1px solid var(--border); border-radius:15px; overflow:hidden; }
+.points-card .group-title { background:var(--site-primary); }
+.points-card table { min-width:620px; }
+.points-card th,.points-card td { padding:10px 9px; white-space:nowrap; }
+.points-card td:first-child { font-weight:850; }
+.ncd-positive { color:var(--success); font-weight:900; }
+.ncd-negative { color:var(--danger); font-weight:900; }
+.points-help { margin:12px 0 0; color:var(--text-muted); font-size:12px; line-height:1.6; }
+@media (max-width:760px) {
+  .stats { grid-template-columns:repeat(2,1fr); }
+  .group-grid, .points-grid { grid-template-columns:1fr; }
+  main { padding:18px 13px 45px; }
+  .topbar { padding:19px 15px; }
+  h1 { font-size:23px; }
+  .form-grid { grid-template-columns:1fr; }
+  .form-item.full { grid-column:auto; }
+}
+
+
+/* ---------- Mobile and responsive image fixes ---------- */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.brand,
+.brandline {
+  min-width: 0;
+}
+
+.brand > div:first-child {
+  flex: 0 0 180px;
+  min-width: 0;
+}
+
+.brand > div:first-child img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 120px;
+  object-fit: contain;
+}
+
+.group-card,
+.points-card,
+.stat,
+.table-wrap {
+  min-width: 0;
+}
+
+.table-wrap {
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 760px) {
+  .brandline {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .brand > div:first-child {
+    flex: 0 0 105px !important;
+    width: 105px !important;
+    max-width: 105px !important;
+    height: 78px !important;
+    margin: 0 !important;
+  }
+
+  .brand > div:first-child img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+  }
+
+  .brand > div:last-child {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  h1 {
+    overflow-wrap: anywhere;
+    font-size: clamp(18px, 5vw, 23px);
+  }
+
+  .top-actions {
+    width: 100%;
+  }
+
+  .top-actions button {
+    flex: 1 1 auto;
+  }
+
+  .hero-strip {
+    gap: 7px;
+  }
+
+  .pill {
+    font-size: 11px;
+  }
+
+  .controls {
+    width: 100%;
+  }
+
+  .controls .control {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .team-select-card select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .points-card .table-wrap {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .brand > div:first-child {
+    flex-basis: 82px !important;
+    width: 82px !important;
+    max-width: 82px !important;
+    height: 68px !important;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  h1 {
+    font-size: 18px;
+    letter-spacing: -0.4px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-size: 23px;
+  }
+
+  .tab {
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+
+  .group-title {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .group-title span {
+    text-align: right;
+  }
+
+  .team-row {
+    padding: 11px;
+  }
+
+  .modal {
+    padding: 16px;
+  }
+
+  footer {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-wrap: anywhere;
+  }
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brandline">
+      <div class="brand">
+        <div style="width:100%; max-width:180px; height:120px; display:flex; align-items:center; justify-content:center; margin:0 auto;">
+          <img 
+        src="Images/logo.jpg"
+        alt="UNO Tournament Logo"
+        style="width:100%; height:100%; max-width:100%; object-fit:contain; display:block;"
+            >
+        </div>
+        <div><div class="eyebrow">Tournament match center · 2026</div><h1>BFR SUPERMACY LEAGUE</h1></div>
+      </div>
+      <div class="top-actions">
+        <button id="exportBtn">Export CSV ↓</button>
+      </div>
+    </div>
+    <div class="hero-strip">
+      <span class="pill">📅 <b>01–08 NOV</b> 2026</span>
+      <span class="pill">👥 <b>18</b> TEAMS</span>
+      <span class="pill">🏁 <b>3</b> GROUPS</span>
+      <span class="pill">🕖 <b>7 / 8 / 9 PM</b> IST</span>
+    </div>
+  </header>
+  <main>
+    <section class="stats">
+      <div class="stat"><div class="stat-label">Total teams</div><div class="stat-value" id="statTeams">18</div><div class="stat-note">Across three groups</div></div>
+      <div class="stat"><div class="stat-label">Group matches</div><div class="stat-value" id="statMatches">45</div><div class="stat-note">15 matches per group</div></div>
+      <div class="stat"><div class="stat-label">Completed</div><div class="stat-value" id="statDone">0</div><div class="stat-note">Results are updated in the website code</div></div>
+      <div class="stat"><div class="stat-label">Upcoming</div><div class="stat-value" id="statUpcoming">45</div><div class="stat-note">PDF schedule fixtures</div></div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="fixtures">All fixtures</button>
+      <button class="tab" data-tab="teams">Individual team schedule</button>
+      <button class="tab" data-tab="points">Points tables</button>
+    </nav>
+
+    <section class="panel active" id="overview">
+      <div class="section-head"><div><h2>Team groups</h2><p>Six teams in each group. Select a team to see its individual fixtures.</p></div></div>
+      <div class="group-grid" id="groupGrid"></div>
+      <div class="footer-note">Match dates and times are shown in India Standard Time (IST).</div>
+    </section>
+
+    <section class="panel" id="fixtures">
+      <div class="section-head"><div><h2>Complete match fixtures</h2><p>View and filter all scheduled matches.</p></div>
+        <div class="controls">
+          <input class="control" id="fixtureSearch" placeholder="Search team..." aria-label="Search team">
+          <select class="control" id="groupFilter"><option value="all">All groups</option><option>A</option><option>B</option><option>C</option></select>
+          <select class="control" id="statusFilter"><option value="all">All statuses</option><option>Upcoming</option><option>Live</option><option>Completed</option></select>
+        </div>
+      </div>
+      <div class="table-wrap"><table><thead><tr id="fixtureHead"><th>Date / Day</th><th>Time</th><th>Group</th><th>Match</th><th>Status</th><th>Winner</th></tr></thead><tbody id="fixtureRows"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="teams">
+      <div class="section-head"><div><h2>Individual team schedule</h2><p>Choose any team to display all five of its matches in one table.</p></div></div>
+      <div class="team-select-card">
+        <div><h3 id="selectedTeamName">UNO Warriors</h3><p id="selectedTeamCaptain">Captain: Master the Blaster</p></div>
+        <select class="control" id="teamSelect" aria-label="Select team"></select>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Date / Day</th><th>Time</th><th>Group</th><th>Opponent</th><th>Opponent captain</th><th>Status</th><th>Result</th></tr></thead><tbody id="teamRows"></tbody></table></div>
+    </section>
+
+    <section class="panel" id="points">
+      <div class="section-head"><div><h2>Group points tables</h2><p>Separate standings for Groups A, B and C. Updated whenever the website code is updated.</p></div></div>
+      <div class="points-grid" id="pointsGrid"></div>
+      <p class="points-help"><strong>NCD:</strong> (Opponent card points − Own card points) ÷ Total rounds. <strong>Win points:</strong> Set in the match data below and awarded separately to the selected winner. These two point types are displayed separately and are never added together.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer style="
+    width: 100%;
+    margin-top: 35px;
+    padding: 30px 15px 20px;
+    background: #101827;
+    color: #ffffff;
+    text-align: center;
+    border-top: 3px solid #f59e0b;
+    box-sizing: border-box;
+">
+    <h2 style="
+        font-size: clamp(16px, 4vw, 22px);
+        font-weight: 800;
+        letter-spacing: 2px;
+        margin: 0 0 8px;
+    ">
+        BFR SUPREMACY LEAGUE 2026
+    </h2>
+
+    <p style="
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: #f59e0b;
+        margin: 8px 0;
+    ">
+        ONE GAME. ONE CHAMPION. ONE SUPREMACY.
+    </p>
+
+    <div style="
+        width: 70px;
+        height: 2px;
+        background: #f59e0b;
+        margin: 18px auto;
+    "></div>
+
+    <p style="
+        font-size: 13px;
+        color: #cbd5e1;
+        margin: 8px 0;
+    ">
+        Designed By ༺.̶̶ℝεχ 𝕊𝕂.̶༻
+    </p>
+
+    <p style="
+        font-size: 11px;
+        color: #94a3b8;
+        margin: 18px 0 0;
+    ">
+        © 2026 BFR Supremacy League. All Rights Reserved.
+    </p>
+</footer>
+
+<script>
+// ===== TO UPDATE THE WEBSITE: edit teams/captains in groups and match results in matches. =====
+// MATCH RESULT UPDATE GUIDE (edit only the matching fixture inside INITIAL.matches):
+// 1) status: change "Upcoming" to "Completed".
+// 2) winner: enter the exact winning team name (must match team1 or team2).
+// 3) score1: Team 1 card points; score2: Team 2 card points.
+// 4) rounds: total rounds played (must be greater than 0 for NCD calculation).
+// 5) winPoints: points awarded to the winner (example: 3). This is NOT card points.
+// Example: Team 1 wins -> winner:"Three Fire", score1:25, score2:15, rounds:5, winPoints:3.
+// NCD for Team 1 = (score2 - score1) / rounds; Team 2 gets the opposite value.
+// Ranking: Win Points first, then NCD as tie-breaker. Never add NCD to Win Points.
+// All fixtures below include editable result fields, even while they are Upcoming.
+const INITIAL = {"groups":{"A":[{"name":"Three Fire","captain":"Nila"},{"name":"YS UNO3 Dragon","captain":"Sam"},{"name":"Broken Guys","captain":"Nikitha"},{"name":"UNO Power House","captain":"Royal King"},{"name":"Star Bucks","captain":"Vincent"},{"name":"UNO Warriors","captain":"Master the Blaster"}],"B":[{"name":"Triple Idot","captain":"Gaara"},{"name":"Mutta Pufffs","captain":"Foden"},{"name":"Team Haters","captain":"HN"},{"name":"Nangalum Player Dhan","captain":"Zehra"},{"name":"Chiththappu Chikkunnu Chikkunnu Vaaraleyy","captain":"Natpea Thunai"},{"name":"Error404","captain":"Escobar"}],"C":[{"name":"Vantha Vettuvom","captain":"Ronaldo"},{"name":"The Celestial Wizards","captain":"Joe"},{"name":"Yaruda Andha Moonu Peru","captain":"Siri"},{"name":"KFC","captain":"Shreyas"},{"name":"Team Jokers","captain":"Mustafa"},{"name":"TP Terri Tory","captain":"Writer"}]},
+"matches":[{"id":"PDF01","date":"01 Nov 2026","day":"Day 1","time":"7:00 PM","group":"A","team1":"Three Fire","captain1":"Nila","team2":"YS UNO3 Dragon","captain2":"Sam",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF02","date":"01 Nov 2026","day":"Day 1","time":"7:00 PM","group":"B","team1":"Triple Idot","captain1":"Gaara","team2":"Mutta Pufffs","captain2":"Foden",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF03","date":"01 Nov 2026","day":"Day 1","time":"8:00 PM","group":"A","team1":"Broken Guys","captain1":"Nikitha","team2":"UNO Power House","captain2":"Royal King",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF04","date":"01 Nov 2026","day":"Day 1","time":"8:00 PM","group":"C","team1":"Vantha Vettuvom","captain1":"Ronaldo","team2":"The Celestial Wizards","captain2":"Joe",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF05","date":"01 Nov 2026","day":"Day 1","time":"9:00 PM","group":"B","team1":"Team Haters","captain1":"HN","team2":"Nangalum Player Dhan","captain2":"Zehra",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF06","date":"01 Nov 2026","day":"Day 1","time":"9:00 PM","group":"C","team1":"Yaruda Andha Moonu Peru","captain1":"Siri","team2":"KFC","captain2":"Shreyas",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF07","date":"02 Nov 2026","day":"Day 2","time":"9:00 PM","group":"A","team1":"Three Fire","captain1":"Nila","team2":"Broken Guys","captain2":"Nikitha",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF08","date":"02 Nov 2026","day":"Day 2","time":"7:00 PM","group":"B","team1":"Triple Idot","captain1":"Gaara","team2":"Team Haters","captain2":"HN",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF09","date":"02 Nov 2026","day":"Day 2","time":"8:00 PM","group":"A","team1":"UNO Power House","captain1":"Royal King","team2":"Star Bucks","captain2":"Vincent",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF10","date":"02 Nov 2026","day":"Day 2","time":"8:00 PM","group":"C","team1":"The Celestial Wizards","captain1":"Joe","team2":"Team Jokers","captain2":"Mustafa",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF11","date":"02 Nov 2026","day":"Day 2","time":"8:00 PM","group":"B","team1":"Nangalum Player Dhan","captain1":"Zehra","team2":"Chiththappu Chikkunnu Chikkunnu Vaaraleyy","captain2":"Natpea Thunai",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF12","date":"02 Nov 2026","day":"Day 2","time":"7:00 PM","group":"C","team1":"KFC","captain1":"Shreyas","team2":"TP Terri Tory","captain2":"Writer",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF13","date":"03 Nov 2026","day":"Day 3","time":"7:00 PM","group":"A","team1":"Three Fire","captain1":"Nila","team2":"UNO Power House","captain2":"Royal King",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF14","date":"03 Nov 2026","day":"Day 3","time":"8:00 PM","group":"B","team1":"Triple Idot","captain1":"Gaara","team2":"Nangalum Player Dhan","captain2":"Zehra",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF15","date":"03 Nov 2026","day":"Day 3","time":"7:00 PM","group":"C","team1":"Team Jokers","captain1":"Mustafa","team2":"TP Terri Tory","captain2":"Writer",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF16","date":"03 Nov 2026","day":"Day 3","time":"8:00 PM","group":"C","team1":"Vantha Vettuvom","captain1":"Ronaldo","team2":"Yaruda Andha Moonu Peru","captain2":"Siri",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF17","date":"03 Nov 2026","day":"Day 3","time":"9:00 PM","group":"B","team1":"Chiththappu Chikkunnu Chikkunnu Vaaraleyy","captain1":"Natpea Thunai","team2":"Error404","captain2":"Escobar",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF18","date":"03 Nov 2026","day":"Day 3","time":"9:00 PM","group":"A","team1":"Star Bucks","captain1":"Vincent","team2":"UNO Warriors","captain2":"Master the Blaster",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF19","date":"04 Nov 2026","day":"Day 4","time":"7:00 PM","group":"A","team1":"Three Fire","captain1":"Nila","team2":"Star Bucks","captain2":"Vincent",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF20","date":"04 Nov 2026","day":"Day 4","time":"9:00 PM","group":"B","team1":"Triple Idot","captain1":"Gaara","team2":"Chiththappu Chikkunnu Chikkunnu Vaaraleyy","captain2":"Natpea Thunai",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF21","date":"04 Nov 2026","day":"Day 4","time":"8:00 PM","group":"A","team1":"YS UNO3 Dragon","captain1":"Sam","team2":"UNO Warriors","captain2":"Master the Blaster",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF22","date":"04 Nov 2026","day":"Day 4","time":"8:00 PM","group":"C","team1":"Vantha Vettuvom","captain1":"Ronaldo","team2":"KFC","captain2":"Shreyas",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF23","date":"04 Nov 2026","day":"Day 4","time":"9:00 PM","group":"B","team1":"Mutta Pufffs","captain1":"Foden","team2":"Error404","captain2":"Escobar",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF24","date":"04 Nov 2026","day":"Day 4","time":"7:00 PM","group":"C","team1":"The Celestial Wizards","captain1":"Joe","team2":"TP Terri Tory","captain2":"Writer",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF25","date":"05 Nov 2026","day":"Day 5","time":"7:00 PM","group":"B","team1":"Mutta Pufffs","captain1":"Foden","team2":"Nangalum Player Dhan","captain2":"Zehra",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF26","date":"05 Nov 2026","day":"Day 5","time":"7:00 PM","group":"B","team1":"Triple Idot","captain1":"Gaara","team2":"Error404","captain2":"Escobar",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF27","date":"05 Nov 2026","day":"Day 5","time":"8:00 PM","group":"A","team1":"Broken Guys","captain1":"Nikitha","team2":"UNO Warriors","captain2":"Master the Blaster",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF28","date":"05 Nov 2026","day":"Day 5","time":"8:00 PM","group":"C","team1":"Vantha Vettuvom","captain1":"Ronaldo","team2":"Team Jokers","captain2":"Mustafa",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF29","date":"05 Nov 2026","day":"Day 5","time":"9:00 PM","group":"B","team1":"Team Haters","captain1":"HN","team2":"Chiththappu Chikkunnu Chikkunnu Vaaraleyy","captain2":"Natpea Thunai",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF30","date":"05 Nov 2026","day":"Day 5","time":"9:00 PM","group":"C","team1":"Yaruda Andha Moonu Peru","captain1":"Siri","team2":"TP Terri Tory","captain2":"Shreyas",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF31","date":"06 Nov 2026","day":"Day 6","time":"7:00 PM","group":"A","team1":"YS UNO3 Dragon","captain1":"Sam","team2":"Broken Guys","captain2":"Nikitha",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF32","date":"06 Nov 2026","day":"Day 6","time":"7:00 PM","group":"B","team1":"Mutta Pufffs","captain1":"Foden","team2":"Team Haters","captain2":"HN",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF33","date":"06 Nov 2026","day":"Day 6","time":"8:00 PM","group":"B","team1":"Nangalum Player Dhan","captain1":"Zehra","team2":"Error404","captain2":"Escobar",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF34","date":"06 Nov 2026","day":"Day 6","time":"8:00 PM","group":"C","team1":"The Celestial Wizards","captain1":"Joe","team2":"KFC","captain2":"Shreyas",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF35","date":"06 Nov 2026","day":"Day 6","time":"9:00 PM","group":"A","team1":"UNO Power House","captain1":"Royal King","team2":"UNO Warriors","captain2":"Master the Blaster",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF36","date":"06 Nov 2026","day":"Day 6","time":"9:00 PM","group":"C","team1":"Yaruda Andha Moonu Peru","captain1":"Siri","team2":"Team Jokers","captain2":"Mustafa",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF37","date":"07 Nov 2026","day":"Day 7","time":"7:00 PM","group":"A","team1":"YS UNO3 Dragon","captain1":"Sam","team2":"Star Bucks","captain2":"Vincent",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF38","date":"07 Nov 2026","day":"Day 7","time":"7:00 PM","group":"A","team1":"Three Fire","captain1":"Nila","team2":"UNO Warriors","captain2":"Master the Blaster",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF39","date":"07 Nov 2026","day":"Day 7","time":"8:00 PM","group":"A","team1":"Broken Guys","captain1":"Nikitha","team2":"Star Bucks","captain2":"Vincent",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF40","date":"07 Nov 2026","day":"Day 7","time":"8:00 PM","group":"C","team1":"Vantha Vettuvom","captain1":"Ronaldo","team2":"TP Terri Tory","captain2":"Writer",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF41","date":"07 Nov 2026","day":"Day 7","time":"9:00 PM","group":"B","team1":"Team Haters","captain1":"HN","team2":"Error404","captain2":"Escobar",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF42","date":"07 Nov 2026","day":"Day 7","time":"9:00 PM","group":"C","team1":"The Celestial Wizards","captain1":"Joe","team2":"Yaruda Andha Moonu Peru","captain2":"Siri",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF43","date":"08 Nov 2026","day":"Day 8","time":"7:00 PM","group":"A","team1":"YS UNO3 Dragon","captain1":"Sam","team2":"UNO Power House","captain2":"Royal King",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF44","date":"08 Nov 2026","day":"Day 8","time":"7:00 PM","group":"B","team1":"Mutta Pufffs","captain1":"Foden","team2":"Chiththappu Chikkunnu Chikkunnu Vaaraleyy","captain2":"Natpea Thunai",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""},
+{"id":"PDF45","date":"08 Nov 2026","day":"Day 8","time":"8:00 PM","group":"C","team1":"KFC","captain1":"Shreyas","team2":"Team Jokers","captain2":"Mustafa",
+"status":"Upcoming","winner":"","score1":null,"score2":null,"rounds":null,"winPoints":0,"notes":""}]};
+// CODE-ONLY VERSION: edit the INITIAL data below, then upload this HTML file to GitHub.
+// All visitors see the same published data after the updated file is deployed.
+// No Firebase, login, localStorage, or browser-side editing is used.
+let state = clone(INITIAL);
+function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+function allTeams() {
+  return Object.entries(state.groups).flatMap(([g, teams]) => teams.map(t => ({...t, group:g})));
+}
+function findTeam(name) {
+  for (const [g, teams] of Object.entries(state.groups)) {
+    const found = teams.find(t => t.name === name);
+    if (found) return {...found, group:g};
+  }
+  return {name, captain:"", group:""};
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function tabTo(id) {
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab===id));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id===id));
+}
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click",()=>tabTo(b.dataset.tab)));
+
+function renderStats() {
+  const done = state.matches.filter(m=>m.status==="Completed").length;
+  document.getElementById("statTeams").textContent = allTeams().length;
+  document.getElementById("statMatches").textContent = state.matches.length;
+  document.getElementById("statDone").textContent = done;
+  document.getElementById("statUpcoming").textContent = state.matches.length-done;
+}
+function renderGroups(targetId) {
+  document.getElementById(targetId).innerHTML = Object.entries(state.groups).map(([g,teams])=>`
+    <div class="group-card">
+      <div class="group-title"><strong>GROUP ${g}</strong><span>${teams.length} TEAMS · ${state.matches.filter(m=>m.group===g).length} MATCHES</span></div>
+      ${teams.map(t=>`<div class="team-row"><div><div class="team-name">${esc(t.name)}</div><div class="team-cap">Captain: ${esc(t.captain)}</div></div><button class="ghost-btn small" onclick="openTeamSchedule('${encodeURIComponent(t.name)}')">View</button></div>`).join("")}
+    </div>`).join("");
+}
+function statusBadge(status) {
+  return `<span class="badge ${String(status).toLowerCase()}">${esc(status)}</span>`;
+}
+function renderFixtures() {
+  const search=(document.getElementById("fixtureSearch").value||"").toLowerCase();
+  const gf=document.getElementById("groupFilter").value;
+  const sf=document.getElementById("statusFilter").value;
+  const head=document.getElementById("fixtureHead");
+  head.innerHTML='<th>Date / Day</th><th>Time</th><th>Group</th><th>Match</th><th>Status</th><th>Winner</th>'; 
+  const list=state.matches.filter(m=>(gf==="all"||m.group===gf)&&(sf==="all"||m.status===sf)&&(`${m.team1} ${m.team2}`.toLowerCase().includes(search)));
+  document.getElementById("fixtureRows").innerHTML=list.length?list.map(m=>`
+    <tr><td><strong>${esc(m.date)}</strong><div class="muted small">${esc(m.day)}</div></td><td>${esc(m.time)}</td><td><span class="badge">Group ${esc(m.group)}</span></td>
+    <td><strong>${esc(m.team1)}</strong><div class="muted small">vs</div><strong>${esc(m.team2)}</strong></td>
+    <td>${statusBadge(m.status)}</td><td>${esc(m.winner||"—")}<div class="muted small">${esc(m.notes||"")}</div></td>
+    </tr>`).join(""):`<tr><td colspan="6" class="empty">No matches found.</td></tr>`;
+}
+function renderTeamSelect() {
+  const select=document.getElementById("teamSelect");
+  const current=select.value || "UNO Warriors";
+  select.innerHTML=allTeams().map(t=>`<option value="${esc(t.name)}">${esc(t.name)} · Group ${t.group}</option>`).join("");
+  select.value=allTeams().some(t=>t.name===current)?current:"UNO Warriors";
+  renderTeamSchedule();
+}
+function renderTeamSchedule() {
+  const team=document.getElementById("teamSelect").value;
+  const info=findTeam(team);
+  document.getElementById("selectedTeamName").textContent=team;
+  document.getElementById("selectedTeamCaptain").textContent=`Group ${info.group} · Captain: ${info.captain}`;
+  const list=state.matches.filter(m=>m.team1===team||m.team2===team).sort(sortMatches);
+  document.getElementById("teamRows").innerHTML=list.map((m,i)=>{
+    const opponent=m.team1===team?m.team2:m.team1;
+    const opp=findTeam(opponent);
+    return `<tr><td>${i+1}</td><td><strong>${esc(m.date)}</strong><div class="muted small">${esc(m.day)}</div></td><td>${esc(m.time)}</td><td>Group ${esc(m.group)}</td><td><strong>${esc(opponent)}</strong></td><td>${esc(opp.captain)}</td><td>${statusBadge(m.status)}</td><td>${esc(m.winner||"—")} ${m.notes?`<div class="muted small">${esc(m.notes)}</div>`:""}</td></tr>`;
+  }).join("") || `<tr><td colspan="8" class="empty">No matches scheduled for this team.</td></tr>`;
+}
+function sortMatches(a,b) {
+  const parseDate=s=>new Date(s);
+  const timeRank={"7:00 PM":0,"8:00 PM":1,"9:00 PM":2};
+  return parseDate(a.date)-parseDate(b.date) || (timeRank[a.time]??0)-(timeRank[b.time]??0);
+}
+function getGroupStandings(group) {
+  const rows = state.groups[group].map(team => ({name:team.name, played:0, won:0, lost:0, ncd:0, winPoints:0}));
+  const byName = new Map(rows.map(r => [r.name, r]));
+  state.matches.filter(m => m.group===group && m.status==="Completed").forEach(m => {
+    const a=byName.get(m.team1), b=byName.get(m.team2);
+    if(!a || !b) return;
+    a.played++; b.played++;
+    if(m.winner===m.team1){a.won++;b.lost++;}
+    else if(m.winner===m.team2){b.won++;a.lost++;}
+
+    // NCD is calculated independently for each team.
+    const s1=Number(m.score1), s2=Number(m.score2), rounds=Number(m.rounds);
+    if(m.score1!==undefined && m.score1!=="" && m.score2!==undefined && m.score2!=="" && Number.isFinite(s1) && Number.isFinite(s2) && Number.isFinite(rounds) && rounds>0){
+      a.ncd+=(s2-s1)/rounds;
+      b.ncd+=(s1-s2)/rounds;
+    }
+
+    // Manually entered winner points are tracked in their own column; never added to card points.
+    const manualWinPoints=Number(m.winPoints||0);
+    if(Number.isFinite(manualWinPoints) && manualWinPoints>0){
+      if(m.winner===m.team1) a.winPoints+=manualWinPoints;
+      else if(m.winner===m.team2) b.winPoints+=manualWinPoints;
+    }
+  });
+  rows.forEach(r=>{r.ncd=Number(r.ncd.toFixed(3));r.winPoints=Number(r.winPoints.toFixed(3));});
+  // Rank by Win Points. NCD is used only as a tie-breaker; the two values are never added.
+  return rows.sort((a,b)=>b.winPoints-a.winPoints || b.ncd-a.ncd || b.won-a.won || a.name.localeCompare(b.name));
+}
+function renderPointsTables() {
+  document.getElementById("pointsGrid").innerHTML=Object.keys(state.groups).map(g=>{
+    const rows=getGroupStandings(g);
+    return `<div class="points-card"><div class="group-title"><strong>GROUP ${g} · POINTS TABLE</strong><span>6 TEAMS</span></div><div class="table-wrap" style="border:0;border-radius:0"><table><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>L</th><th>Win Points</th><th>NCD</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${r.played}</td><td>${r.won}</td><td>${r.lost}</td><td><strong>${Number.isInteger(r.winPoints)?r.winPoints:r.winPoints.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}</strong></td><td><strong>${r.ncd>0?"+":""}${r.ncd.toFixed(3)}</strong></td></tr>`).join("")}</tbody></table></div></div>`;
+  }).join("");
+}
+function renderAll() {
+  renderStats(); renderGroups("groupGrid"); renderFixtures(); renderTeamSelect(); renderPointsTables();
+}
+function openTeamSchedule(encoded) {
+  const name=decodeURIComponent(encoded);
+  document.getElementById("teamSelect").value=name;
+  tabTo("teams"); renderTeamSchedule();
+}
+document.getElementById("teamSelect").addEventListener("change",renderTeamSchedule);
+["fixtureSearch","groupFilter","statusFilter"].forEach(id=>document.getElementById(id).addEventListener(id==="fixtureSearch"?"input":"change",renderFixtures));
+
+document.getElementById("exportBtn").addEventListener("click",exportCSV);
+function exportCSV() {
+  const headers=["Date","Day","Time","Group","Team 1","Captain 1","Team 2","Captain 2","Status","Winner","Team 1 Card Score","Team 2 Card Score","Total Rounds","Winner Points (Manual)","Notes"];
+  const rows=state.matches.map(m=>[m.date,m.day,m.time,m.group,m.team1,m.captain1,m.team2,m.captain2,m.status,m.winner,m.score1??"",m.score2??"",m.rounds??"",m.winPoints??"",m.notes]);
+  const csv=[headers,...rows].map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download="UNO_Tournament_2026_Fixtures.csv"; a.click(); URL.revokeObjectURL(url);
+}
+renderAll();
+</script>
+</body>
+</html>
