@@ -870,16 +870,19 @@ function renderPlayoffs() {
 
   if (!allGroupMatchesComplete) {
     const remaining = Math.max(0, totalRequiredMatches - completedMatches);
-    gate.innerHTML = `<strong>⏳ Group Stage In Progress</strong><br>Playoff qualification is locked until all ${totalRequiredMatches} group-stage matches are completed.<br><strong>${completedMatches} / ${totalRequiredMatches}</strong> matches completed · <strong>${remaining}</strong> remaining.`;
-    content.style.display = "none";
-    // Clear any previously displayed seeds so stale qualification cannot remain visible.
-    document.getElementById("groupQualifiers").innerHTML = "";
+    gate.innerHTML = `<strong>⏳ GROUP STAGE IN PROGRESS</strong><br>Qualification and seedings are locked until all ${totalRequiredMatches} group-stage matches are marked Completed.<br><strong>${completedMatches} / ${totalRequiredMatches}</strong> matches completed · <strong>${remaining}</strong> remaining. The knockout bracket below is a preview only.`;
+    // Keep the bracket visible, but do not reveal qualifiers or seedings before all 45 matches finish.
+    content.style.display = "block";
+    document.getElementById("groupQualifiers").innerHTML = `<div class="playoff-info">🔒 Group-wise qualifiers will appear here after all 45 group matches are completed.</div>`;
     document.getElementById("playoffLeaderboard").innerHTML = "";
     document.getElementById("eliminatedTeam").innerHTML = "";
-    document.getElementById("quarterfinals").innerHTML = "";
-    document.getElementById("semifinals").innerHTML = "";
-    document.getElementById("grandFinal").innerHTML = "";
-    document.getElementById("championDisplay").innerHTML = "";
+    const qfPairs = [[1,8],[4,5],[2,7],[3,6]];
+    document.getElementById("quarterfinals").innerHTML = qfPairs.map((pair,i) => `<div class="seed-item"><span><strong>QF ${i+1}</strong><br>Seed #${pair[0]}</span><span class="muted">VS</span><span style="text-align:right"><strong>Seed #${pair[1]}</strong><br>To be confirmed</span></div>`).join("");
+    document.getElementById("semifinals").innerHTML =
+      playoffStageCard("SEMIFINAL 1", "", "", "", "SF 1", "Winner QF 1", "Winner QF 2") +
+      playoffStageCard("SEMIFINAL 2", "", "", "", "SF 2", "Winner QF 3", "Winner QF 4");
+    document.getElementById("grandFinal").innerHTML = playoffStageCard("BFR GRAND FINAL", "", "", "", "CHAMPIONSHIP", "Winner SF 1", "Winner SF 2");
+    document.getElementById("championDisplay").innerHTML = `<div class="playoff-info" style="margin-top:12px;text-align:center">🏆 The champion will be crowned after the Grand Final.</div>`;
     return;
   }
 
