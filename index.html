@@ -853,9 +853,9 @@ const playoffResults = {
   sf1Winner: "", sf2Winner: "",
   finalWinner: ""
 };
-function playoffStageCard(title, teamA, teamB, winner, chip) {
-  const a = teamA || "Winner to be decided";
-  const b = teamB || "Winner to be decided";
+function playoffStageCard(title, teamA, teamB, winner, chip, placeholderA="Winner to be decided", placeholderB="Winner to be decided") {
+  const a = teamA || placeholderA;
+  const b = teamB || placeholderB;
   return `<div class="stage-match"><div class="stage-match-title"><span>${title}</span><span class="stage-chip">${chip}</span></div><div class="stage-team${winner && winner===a?' winner':''}">${esc(a)}${winner===a?' 🏅':''}</div><div class="stage-vs">VS</div><div class="stage-team${winner && winner===b?' winner':''}">${esc(b)}${winner===b?' 🏅':''}</div>${winner?`<div class="points-help"><strong>Winner:</strong> ${esc(winner)}</div>`:`<div class="points-help">Winner will be updated after the match.</div>`}</div>`;
 }
 function renderPlayoffs() {
@@ -918,12 +918,12 @@ function renderPlayoffs() {
   const sf1a=playoffResults.qf1Winner, sf1b=playoffResults.qf2Winner;
   const sf2a=playoffResults.qf3Winner, sf2b=playoffResults.qf4Winner;
   document.getElementById("semifinals").innerHTML =
-    playoffStageCard("SEMIFINAL 1",sf1a,sf1b,playoffResults.sf1Winner,"SF 1") +
-    playoffStageCard("SEMIFINAL 2",sf2a,sf2b,playoffResults.sf2Winner,"SF 2");
+    playoffStageCard("SEMIFINAL 1",sf1a,sf1b,playoffResults.sf1Winner,"SF 1","Winner QF 1","Winner QF 2") +
+    playoffStageCard("SEMIFINAL 2",sf2a,sf2b,playoffResults.sf2Winner,"SF 2","Winner QF 3","Winner QF 4");
 
   // Grand final is populated by the two semifinal winners.
   const finalA=playoffResults.sf1Winner, finalB=playoffResults.sf2Winner;
-  document.getElementById("grandFinal").innerHTML=playoffStageCard("BFR GRAND FINAL",finalA,finalB,playoffResults.finalWinner,"CHAMPIONSHIP");
+  document.getElementById("grandFinal").innerHTML=playoffStageCard("BFR GRAND FINAL",finalA,finalB,playoffResults.finalWinner,"CHAMPIONSHIP","Winner SF 1","Winner SF 2");
   document.getElementById("championDisplay").innerHTML=playoffResults.finalWinner
     ? `<div class="champion-banner"><div class="champion-crown">👑🏆👑</div><span>BFR SUPREMACY LEAGUE 2026 CHAMPIONS</span><strong>${esc(playoffResults.finalWinner)}</strong><span>THE ULTIMATE SUPREMACY!</span></div>`
     : `<div class="playoff-info" style="margin-top:12px;text-align:center">🏆 The champion will be crowned after the Grand Final.</div>`;
