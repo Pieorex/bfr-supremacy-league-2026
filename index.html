@@ -452,6 +452,8 @@ img {
     <section class="panel" id="playoffs">
       <div class="section-head"><div><h2>🏆 Playoffs</h2><p>Qualification, cross-group seeding and quarterfinal matchups.</p></div></div>
       <div class="playoff-info"><strong>Group Stage Cutoff:</strong> Top 3 teams from each group qualify (9 teams total). Ranking order: <strong>Win Points → NCD → Head-to-Head</strong>.</div>
+      <div id="playoffGate" class="playoff-info" role="status" aria-live="polite"></div>
+      <div id="playoffContent" style="display:none">
       <h3 class="playoff-section-title">1. Group-wise qualifiers</h3>
       <div class="playoff-grid" id="groupQualifiers"></div>
       <h3 class="playoff-section-title">2. Combined 9-team elimination leaderboard</h3>
@@ -460,6 +462,7 @@ img {
       <div id="eliminatedTeam"></div>
       <h3 class="playoff-section-title">3. Quarterfinal pairings</h3>
       <div class="seed-list" id="quarterfinals"></div>
+      </div>
     </section>
 
   </main>
@@ -752,6 +755,30 @@ function h2hWinsAmong(teamName, teamNames) {
   return teamNames.reduce((total, other) => total + (other === teamName ? 0 : headToHeadWins(teamName, other)), 0);
 }
 function renderPlayoffs() {
+  // Do not publish any qualifiers until every scheduled group-stage fixture is completed.
+  // This tournament has 45 group-stage matches (15 in each of Groups A, B and C).
+  const groupStageMatches = state.matches.filter(m => ["A", "B", "C"].includes(String(m.group)));
+  const completedMatches = groupStageMatches.filter(m => m.status === "Completed").length;
+  const totalRequiredMatches = 45;
+  const allGroupMatchesComplete = groupStageMatches.length === totalRequiredMatches && completedMatches === totalRequiredMatches;
+  const gate = document.getElementById("playoffGate");
+  const content = document.getElementById("playoffContent");
+
+  if (!allGroupMatchesComplete) {
+    const remaining = Math.max(0, totalRequiredMatches - completedMatches);
+    gate.innerHTML = `<strong>⏳ Group Stage In Progress</strong><br>Playoff qualification is locked until all ${totalRequiredMatches} group-stage matches are completed.<br><strong>${completedMatches} / ${totalRequiredMatches}</strong> matches completed · <strong>${remaining}</strong> remaining.`;
+    content.style.display = "none";
+    // Clear any previously displayed seeds so stale qualification cannot remain visible.
+    document.getElementById("groupQualifiers").innerHTML = "";
+    document.getElementById("playoffLeaderboard").innerHTML = "";
+    document.getElementById("eliminatedTeam").innerHTML = "";
+    document.getElementById("quarterfinals").innerHTML = "";
+    return;
+  }
+
+  gate.innerHTML = `<strong>✓ Group Stage Completed</strong><br>All ${totalRequiredMatches} group-stage matches are complete. Final qualifiers and quarterfinal seeds are now displayed.`;
+  content.style.display = "block";
+
   const qualifiers = [];
   document.getElementById("groupQualifiers").innerHTML = Object.keys(state.groups).map(group => {
     const topThree = getGroupStandings(group).slice(0, 3).map((team, index) => {
