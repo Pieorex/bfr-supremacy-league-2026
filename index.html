@@ -181,6 +181,24 @@ td strong { font-weight:850; }
 .playoff-card table { min-width:520px; }
 .playoff-card th,.playoff-card td { padding:10px 9px; white-space:nowrap; }
 .playoff-card .table-wrap { border:0; border-radius:0; }
+
+/* Official playoff qualification rules information panel */
+.playoff-rules { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--site-primary); border-radius:14px; padding:18px; margin:0 0 16px; line-height:1.6; }
+.playoff-rules-heading { font-size:16px; font-weight:850; letter-spacing:.3px; }
+.playoff-rules-intro { margin:4px 0 14px; color:var(--muted); font-size:13px; }
+.playoff-rule-block { padding:13px 0; border-top:1px solid var(--border); }
+.playoff-rule-block h3 { margin:0 0 8px; font-size:14px; }
+.playoff-rule-block ul,.playoff-rule-block ol { margin:6px 0 0; padding-left:22px; }
+.playoff-rule-block li { margin:5px 0; font-size:13px; }
+.playoff-rule-block ol { padding-left:22px; }
+.ncd-reminder { margin-top:10px; padding:11px 13px; border-radius:10px; background:var(--surface-soft); font-size:13px; overflow-wrap:anywhere; }
+.ncd-reminder span { color:var(--muted); }
+.qf-rule-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.qf-rule-grid > div { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font-size:13px; }
+.qf-rule-grid strong { color:var(--site-primary); }
+.playoff-rules-footer { border-top:1px solid var(--border); padding-top:12px; text-align:center; font-weight:800; font-size:14px; }
+@media(max-width:520px) { .playoff-rules { padding:14px 12px; } .qf-rule-grid { grid-template-columns:1fr; } .playoff-rules-heading { font-size:14px; } }
+
 .playoff-info { background:var(--surface-soft); border:1px solid var(--border); padding:14px 16px; border-radius:13px; margin:0 0 15px; line-height:1.6; font-size:13px; }
 .playoff-info strong { color:var(--site-primary); }
 .playoff-section-title { margin:24px 0 12px; font-size:17px; }
@@ -451,7 +469,45 @@ img {
 
     <section class="panel" id="playoffs">
       <div class="section-head"><div><h2>🏆 Playoffs</h2><p>Qualification, cross-group seeding and quarterfinal matchups.</p></div></div>
-      <div class="playoff-info"><strong>Group Stage Cutoff:</strong> Top 3 teams from each group qualify (9 teams total). Ranking order: <strong>Win Points → NCD → Head-to-Head</strong>.</div>
+      <div class="playoff-rules">
+        <div class="playoff-rules-heading">📢 OFFICIAL PLAYOFF QUALIFICATION RULES</div>
+        <p class="playoff-rules-intro">The qualification roadmap from the group stages to the trophy.</p>
+
+        <div class="playoff-rule-block">
+          <h3>1️⃣ GROUP STAGE — TOP 3 CUTOFF</h3>
+          <ul>
+            <li>Only the <strong>Top 3 teams</strong> from Group A, Group B and Group C advance to the Playoff Pool — <strong>9 teams total</strong>.</li>
+            <li>Group ranking order:
+              <ol>
+                <li><strong>Win Points</strong></li>
+                <li><strong>Net Card Differential (NCD)</strong></li>
+                <li><strong>Head-to-Head</strong></li>
+              </ol>
+            </li>
+          </ul>
+        </div>
+
+        <div class="playoff-rule-block">
+          <h3>2️⃣ THE 9TH-TEAM ELIMINATION — NCD BUBBLE</h3>
+          <ul>
+            <li>The 9 qualified teams are combined into a single cross-group leaderboard.</li>
+            <li><strong>Top 8 teams</strong> advance to the Quarterfinals (Seeds #1 through #8).</li>
+            <li>The <strong>#9 ranked team is ELIMINATED.</strong></li>
+          </ul>
+          <div class="ncd-reminder"><strong>⚠️ NCD Formula Reminder</strong><br>NCD = (Opponent Card Points − Own Card Points) ÷ Total Rounds<br><span>Keep your remaining card penalty as low as possible in every round — every single card counts!</span></div>
+        </div>
+
+        <div class="playoff-rule-block">
+          <h3>3️⃣ QUARTERFINAL SEEDING</h3>
+          <div class="qf-rule-grid">
+            <div><strong>QF 1</strong><span>Seed 1 vs Seed 8</span></div>
+            <div><strong>QF 2</strong><span>Seed 4 vs Seed 5</span></div>
+            <div><strong>QF 3</strong><span>Seed 2 vs Seed 7</span></div>
+            <div><strong>QF 4</strong><span>Seed 3 vs Seed 6</span></div>
+          </div>
+        </div>
+        <div class="playoff-rules-footer">Every card matters. Finish strong! 🃏🔥</div>
+      </div>
       <div id="playoffGate" class="playoff-info" role="status" aria-live="polite"></div>
       <div id="playoffContent" style="display:none">
       <h3 class="playoff-section-title">1. Group-wise qualifiers</h3>
