@@ -174,6 +174,24 @@ td strong { font-weight:850; }
 .ncd-positive { color:var(--success); font-weight:900; }
 .ncd-negative { color:var(--danger); font-weight:900; }
 .points-help { margin:12px 0 0; color:var(--text-muted); font-size:12px; line-height:1.6; }
+
+.playoff-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.playoff-card { background:var(--surface); border:1px solid var(--border); border-radius:15px; overflow:hidden; min-width:0; }
+.playoff-card .group-title { background:var(--site-primary); }
+.playoff-card table { min-width:520px; }
+.playoff-card th,.playoff-card td { padding:10px 9px; white-space:nowrap; }
+.playoff-card .table-wrap { border:0; border-radius:0; }
+.playoff-info { background:var(--surface-soft); border:1px solid var(--border); padding:14px 16px; border-radius:13px; margin:0 0 15px; line-height:1.6; font-size:13px; }
+.playoff-info strong { color:var(--site-primary); }
+.playoff-section-title { margin:24px 0 12px; font-size:17px; }
+.seed-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.seed-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 14px; background:var(--surface); border:1px solid var(--border); border-radius:12px; font-size:13px; }
+.seed-item strong { color:var(--site-primary); }
+.eliminated { border-color:var(--danger); }
+.eliminated strong { color:var(--danger); }
+@media(max-width:900px){ .playoff-grid { grid-template-columns:1fr; } }
+@media(max-width:520px){ .seed-list { grid-template-columns:1fr; } }
+
 @media (max-width:760px) {
   .stats { grid-template-columns:repeat(2,1fr); }
   .group-grid, .points-grid { grid-template-columns:1fr; }
@@ -365,7 +383,7 @@ img {
       <div class="brand">
         <div style="width:100%; max-width:180px; height:120px; display:flex; align-items:center; justify-content:center; margin:0 auto;">
           <img 
-        src="logo.jpg"
+        src="Images/logo.jpg"
         alt="UNO Tournament Logo"
         style="width:100%; height:100%; max-width:100%; object-fit:contain; display:block;"
             >
@@ -396,6 +414,7 @@ img {
       <button class="tab" data-tab="fixtures">All fixtures</button>
       <button class="tab" data-tab="teams">Individual team schedule</button>
       <button class="tab" data-tab="points">Points tables</button>
+      <button class="tab" data-tab="playoffs">🏆 Playoffs</button>
     </nav>
 
     <section class="panel active" id="overview">
@@ -428,6 +447,19 @@ img {
       <div class="section-head"><div><h2>Group points tables</h2><p>Separate standings for Groups A, B and C. Updated whenever the website code is updated.</p></div></div>
       <div class="points-grid" id="pointsGrid"></div>
       <p class="points-help"><strong>NCD:</strong> (Opponent card points − Own card points) ÷ Total rounds. <strong>Win points:</strong> Set in the match data below and awarded separately to the selected winner. These two point types are displayed separately and are never added together.</p>
+    </section>
+
+    <section class="panel" id="playoffs">
+      <div class="section-head"><div><h2>🏆 Playoffs</h2><p>Qualification, cross-group seeding and quarterfinal matchups.</p></div></div>
+      <div class="playoff-info"><strong>Group Stage Cutoff:</strong> Top 3 teams from each group qualify (9 teams total). Ranking order: <strong>Win Points → NCD → Head-to-Head</strong>.</div>
+      <h3 class="playoff-section-title">1. Group-wise qualifiers</h3>
+      <div class="playoff-grid" id="groupQualifiers"></div>
+      <h3 class="playoff-section-title">2. Combined 9-team elimination leaderboard</h3>
+      <div class="playoff-info">The nine group qualifiers are ranked together. Seeds <strong>#1–#8</strong> advance to the quarterfinals; seed <strong>#9</strong> is eliminated. NCD = (Opponent Card Points − Own Card Points) ÷ Total Rounds.</div>
+      <div class="table-wrap"><table style="min-width:680px"><thead><tr><th>Seed</th><th>Team</th><th>Group</th><th>Win Points</th><th>NCD</th><th>H2H Wins</th><th>Status</th></tr></thead><tbody id="playoffLeaderboard"></tbody></table></div>
+      <div id="eliminatedTeam"></div>
+      <h3 class="playoff-section-title">3. Quarterfinal pairings</h3>
+      <div class="seed-list" id="quarterfinals"></div>
     </section>
 
   </main>
@@ -692,8 +724,16 @@ function getGroupStandings(group) {
     }
   });
   rows.forEach(r=>{r.ncd=Number(r.ncd.toFixed(3));r.winPoints=Number(r.winPoints.toFixed(3));});
-  // Rank by Win Points. NCD is used only as a tie-breaker; the two values are never added.
-  return rows.sort((a,b)=>b.winPoints-a.winPoints || b.ncd-a.ncd || b.won-a.won || a.name.localeCompare(b.name));
+  // Rank by Win Points, then NCD, then direct head-to-head result.
+  return rows.sort((a,b)=>{
+    const pointsDiff=b.winPoints-a.winPoints;
+    if(pointsDiff) return pointsDiff;
+    const ncdDiff=b.ncd-a.ncd;
+    if(ncdDiff) return ncdDiff;
+    const h2hDiff=headToHeadWins(b.name,a.name,group)-headToHeadWins(a.name,b.name,group);
+    if(h2hDiff) return h2hDiff;
+    return b.won-a.won || a.name.localeCompare(b.name);
+  });
 }
 function renderPointsTables() {
   document.getElementById("pointsGrid").innerHTML=Object.keys(state.groups).map(g=>{
@@ -701,8 +741,46 @@ function renderPointsTables() {
     return `<div class="points-card"><div class="group-title"><strong>GROUP ${g} · POINTS TABLE</strong><span>6 TEAMS</span></div><div class="table-wrap" style="border:0;border-radius:0"><table><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>L</th><th>Win Points</th><th>NCD</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${r.played}</td><td>${r.won}</td><td>${r.lost}</td><td><strong>${Number.isInteger(r.winPoints)?r.winPoints:r.winPoints.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})}</strong></td><td><strong>${r.ncd>0?"+":""}${r.ncd.toFixed(3)}</strong></td></tr>`).join("")}</tbody></table></div></div>`;
   }).join("");
 }
+// Count completed head-to-head wins for teamA against teamB. An optional group
+// limits the check to that group's standings; no direct match means zero.
+function headToHeadWins(teamA, teamB, group=null) {
+  return state.matches.filter(m => m.status === "Completed" && (!group || m.group === group) &&
+    ((m.team1 === teamA && m.team2 === teamB) || (m.team1 === teamB && m.team2 === teamA)) &&
+    m.winner === teamA).length;
+}
+function h2hWinsAmong(teamName, teamNames) {
+  return teamNames.reduce((total, other) => total + (other === teamName ? 0 : headToHeadWins(teamName, other)), 0);
+}
+function renderPlayoffs() {
+  const qualifiers = [];
+  document.getElementById("groupQualifiers").innerHTML = Object.keys(state.groups).map(group => {
+    const topThree = getGroupStandings(group).slice(0, 3).map((team, index) => {
+      const entry = {...team, group, groupRank:index+1};
+      qualifiers.push(entry);
+      return entry;
+    });
+    return `<div class="playoff-card"><div class="group-title"><strong>GROUP ${group}</strong><span>TOP 3 QUALIFIERS</span></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Team</th><th>Win Pts</th><th>NCD</th></tr></thead><tbody>${topThree.map((t,i)=>`<tr><td>${i+1}</td><td><strong>${esc(t.name)}</strong></td><td>${t.winPoints}</td><td>${t.ncd>0?"+":""}${t.ncd.toFixed(3)}</td></tr>`).join("")}</tbody></table></div></div>`;
+  }).join("");
+
+  const qualifiedNames = qualifiers.map(t=>t.name);
+  qualifiers.forEach(t=>t.h2hWins=h2hWinsAmong(t.name, qualifiedNames));
+  qualifiers.sort((a,b)=>b.winPoints-a.winPoints || b.ncd-a.ncd || b.h2hWins-a.h2hWins || a.name.localeCompare(b.name));
+
+  document.getElementById("playoffLeaderboard").innerHTML = qualifiers.map((t,index)=>{
+    const seed=index+1;
+    return `<tr${seed===9?' class="eliminated"':''}><td><strong>#${seed}</strong></td><td><strong>${esc(t.name)}</strong></td><td>Group ${t.group}</td><td>${t.winPoints}</td><td>${t.ncd>0?"+":""}${t.ncd.toFixed(3)}</td><td>${t.h2hWins}</td><td>${seed<=8?'<span class="badge completed">Qualified for QF</span>':'<span class="badge live">Eliminated</span>'}</td></tr>`;
+  }).join("");
+
+  const eliminated=qualifiers[8];
+  document.getElementById("eliminatedTeam").innerHTML=eliminated?`<div class="seed-item eliminated" style="margin-top:12px"><span><strong>Seed #9 · Eliminated</strong><br>${esc(eliminated.name)} · Group ${eliminated.group}</span><span class="badge live">OUT</span></div>`:"";
+  const qf=[ [1,8], [4,5], [2,7], [3,6] ];
+  document.getElementById("quarterfinals").innerHTML=qf.map((pair,i)=>{
+    const a=qualifiers[pair[0]-1], b=qualifiers[pair[1]-1];
+    return `<div class="seed-item"><span><strong>QF ${i+1}</strong><br>#${pair[0]} ${a?esc(a.name):"—"}</span><span class="muted">VS</span><span style="text-align:right"><strong>#${pair[1]}</strong><br>${b?esc(b.name):"—"}</span></div>`;
+  }).join("");
+}
 function renderAll() {
-  renderStats(); renderGroups("groupGrid"); renderFixtures(); renderTeamSelect(); renderPointsTables();
+  renderStats(); renderGroups("groupGrid"); renderFixtures(); renderTeamSelect(); renderPointsTables(); renderPlayoffs();
 }
 function openTeamSchedule(encoded) {
   const name=decodeURIComponent(encoded);
